@@ -1,0 +1,214 @@
+<!DOCTYPE html>  <html lang="pt-BR">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0">  
+<title>🔥 Churrasquinho da Symonny 🔥</title>  <!-- Google Fonts -->  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">  <!-- Font Awesome -->  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  <!-- Chart.js -->  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>  
+* { box-sizing: border-box; transition:0.3s ease; }  
+body { font-family: 'Poppins', sans-serif; background: radial-gradient(circle at top, #0d0d1a, #1a1a3f); margin:0; padding:0; color:#fff; overflow-x:hidden; }  
+h1 { text-align:center; margin:0; padding:18px; font-size:30px; color:#fff; text-shadow:0 0 10px #7f5af0,0 0 20px #4caf50; animation:pulse 3s infinite alternate; }  
+@keyframes pulse { from { text-shadow:0 0 10px #7f5af0; } to { text-shadow:0 0 25px #4caf50; } }  
+  
+/* Menus e Containers */  
+.menu, #vendas, #troco, #historico, #dashboard { margin:25px auto; background: rgba(25,25,45,0.95); border-radius: 20px; padding:25px; width:90%; max-width:800px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }  
+.hidden { display:none; }  
+button { display:block; width:90%; margin:12px auto; padding:15px; border:none; border-radius:14px; font-size:22px; font-weight:600; cursor:pointer; color:#fff; box-shadow:0 4px 15px rgba(0,0,0,0.3); }  
+button:hover { transform:scale(1.05); }  
+button:active { transform:scale(0.98); }  
+  
+.venda-btn { background: linear-gradient(135deg,#00c853,#4caf50); }  
+.troco-btn { background: linear-gradient(135deg,#2196F3,#42a5f5); }  
+.historico-btn { background: linear-gradient(135deg,#ff9800,#ffc107); }  
+.dashboard-btn { background: linear-gradient(135deg,#7f5af0,#4caf50); }  
+.voltar-btn { background: linear-gradient(135deg,#333,#555); }  
+  
+/* Produtos e Tabelas */  
+.produto-btn { background:#1b2735; color:#fff; border:2px solid #7f5af0; font-size:20px; border-radius:12px; padding:14px; text-align:left; display:flex; justify-content:space-between; }  
+.produto-btn:hover { background:#273353; }  
+  
+table { width:100%; margin-top:15px; border-collapse: collapse; background:#1a1a3f; border-radius:10px; overflow:hidden; display:block; }  
+thead, tbody, tr { display:table; width:100%; table-layout: fixed; }  
+tbody { max-height:250px; overflow-y:auto; display:block; }  
+th { background:#4b3f8d; color:#fff; padding:10px; font-size:18px; }  
+td { border-bottom:1px solid #333; padding:8px; font-size:18px; text-align:center; }  
+tr:nth-child(even) { background-color:#2a2a50; }  
+.total { font-size:22px; font-weight:bold; margin-top:15px; color:#fff; background:#4b3f8d; border-radius:10px; padding:12px; text-align:center; }  
+  
+/* Inputs */  
+input { font-size:22px; padding:10px; margin:10px auto; width:85%; border-radius:10px; border:2px solid #555; text-align:center; display:block; background:#1b2735; color:#fff; }  
+  
+/* Dashboard interno */  
+.dashboard-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }  
+.card { background:#1f1f3f; border-radius:12px; padding:20px; display:flex; flex-direction:column; }  
+.card h3 { font-size:16px; color:#ccc; margin-bottom:10px; }  
+.card .value { font-size:28px; font-weight:700; color:#7f5af0; }  
+.card .meta { font-size:12px; color:#aaa; margin-top:5px; }  
+.progress-bar { height:8px; background:#444; border-radius:4px; margin-top:10px; overflow:hidden; }  
+.progress { height:8px; border-radius:4px; background: linear-gradient(90deg,#7f5af0,#4caf50); width:0%; transition: width 1s ease; }  
+  
+.product-bar { display:flex; align-items:center; margin-bottom:10px; }  
+.product-bar span { width:80px; font-size:14px; }  
+.product-bar .bar-container { flex:1; background:#444; height:12px; border-radius:6px; overflow:hidden; }  
+.product-bar .bar { height:12px; border-radius:6px; background:#7f5af0; width:0%; transition: width 1s ease; }  
+  
+.chart-container { width:100%; height:200px; }  
+  
+</style>  </head>  
+<body>  <h1>🔥 Churrasquinho da Symonny 🔥</h1>  <div id="menu-principal" class="menu">  
+    <button class="venda-btn" onclick="abrir('vendas')">🧾 Registrar Venda</button>  
+    <button class="troco-btn" onclick="abrir('troco')">💰 Sistema de Troco</button>  
+    <button class="historico-btn" onclick="abrir('historico')">📊 Histórico de Vendas</button>  
+    <button class="dashboard-btn" onclick="abrir('dashboard')">📈 Dashboard</button>  
+</div>  <!-- VENDAS -->  <div id="vendas" class="hidden">  
+    <h2>📋 Registrar Venda</h2>  
+    <button class="produto-btn" onclick="registrarVenda('🍺 Cerveja Litrinho',3.50)"><span>🍺</span>Cerveja Litrinho – R$3,50</button>  
+    <button class="produto-btn" onclick="registrarVenda('🥩 Espetinho',16.00)"><span>🥩</span>Espetinho – R$16,00</button>  
+    <div class="total" id="total-dia">Total do Dia: R$0,00</div>  
+    <table id="tabela-vendas"><thead><tr><th>Hora</th><th>Produto</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>  
+    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
+</div>  <!-- TROCO -->  <div id="troco" class="hidden">  
+    <h2>💰 Sistema de Troco</h2>  
+    <input type="number" id="valor-compra" placeholder="Valor da compra (R$)">  
+    <input type="number" id="valor-recebido" placeholder="Valor recebido (R$)">  
+    <button class="venda-btn" onclick="calcularTroco()">Calcular Troco</button>  
+    <div id="resultado-troco" class="total"></div>  
+    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
+</div>  <!-- HISTÓRICO -->  <div id="historico" class="hidden">  
+    <h2>📊 Histórico de Vendas</h2>  
+    <table id="tabela-historico"><thead><tr><th>Hora</th><th>Produto</th><th>Valor</th></tr></thead><tbody></tbody></table>  
+    <div class="total" id="historico-total"></div>  
+    <button class="venda-btn" onclick="limparHistorico()">🗑️ Apagar Tudo</button>  
+    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
+</div>  <!-- DASHBOARD -->  <div id="dashboard" class="hidden">  
+    <h2>📈 Dashboard Profissional</h2>  
+    <div class="dashboard-grid">  
+        <div class="card"><h3>FATURAMENTO</h3><div class="value" id="dash-faturamento">R$0,00</div><div class="meta">MÊS ATUAL</div><div class="progress-bar"><div class="progress" id="progress-faturamento" style="width:0%"></div></div></div>  
+        <div class="card"><h3>MARGEM BRUTA</h3><div class="value" id="dash-margem">0%</div><div class="meta">VS ANO ANTERIOR</div><div class="progress-bar"><div class="progress" id="progress-margem" style="width:0%"></div></div></div>  
+        <div class="card"><h3>QTD VENDIDA</h3><div class="value" id="dash-quantidade">0</div><div class="meta">UNIDADES</div><div class="progress-bar"><div class="progress" id="progress-qtd" style="width:0%"></div></div></div>  
+        <div class="card">  
+            <h3>FATURAMENTO POR PRODUTO</h3>  
+            <div class="product-bar"><span>Cerveja</span><div class="bar-container"><div class="bar" id="bar-cerveja" style="width:0%"></div></div></div>  
+            <div class="product-bar"><span>Espetinho</span><div class="bar-container"><div class="bar" id="bar-espetinho" style="width:0%"></div></div></div>  
+        </div>  
+        <div class="card">  
+            <h3>FATURAMENTO AO LONGO DO TEMPO</h3>  
+            <div class="chart-container"><canvas id="lineChart"></canvas></div>  
+        </div>  
+    </div>  
+</div>  <script>  
+// Vendas armazenadas  
+let vendas = JSON.parse(localStorage.getItem('vendas')) || [];  
+  
+// Abrir tela  
+function abrir(tela){  
+    document.querySelectorAll('#menu-principal, #vendas, #troco, #historico, #dashboard').forEach(d => d.classList.add('hidden'));  
+    document.getElementById(tela).classList.remove('hidden');  
+    if(tela==='vendas') atualizarTabela();  
+    if(tela==='historico') mostrarHistorico();  
+    if(tela==='dashboard') atualizarDashboard();  
+}  
+  
+// Voltar ao menu  
+function voltar(){ abrir('menu-principal'); }  
+  
+// Registrar venda  
+function registrarVenda(produto, valor){  
+    const hora = new Date().toLocaleTimeString();  
+    vendas.push({hora, produto, valor});  
+    localStorage.setItem('vendas', JSON.stringify(vendas));  
+    atualizarTabela();  
+}  
+  
+// Atualizar tabela vendas  
+function atualizarTabela(){  
+    const corpo = document.querySelector('#tabela-vendas tbody');  
+    corpo.innerHTML = '';  
+    let total = 0;  
+    vendas.forEach((v,i)=>{  
+        total+=v.valor;  
+        corpo.innerHTML+=`<tr><td>${v.hora}</td><td>${v.produto}</td><td>R$${v.valor.toFixed(2)}</td><td><button onclick="apagarVenda(${i})">❌</button></td></tr>`;  
+    });  
+    document.getElementById('total-dia').textContent='Total do Dia: R$'+total.toFixed(2);  
+}  
+  
+// Apagar venda individual  
+function apagarVenda(i){  
+    vendas.splice(i,1);  
+    localStorage.setItem('vendas', JSON.stringify(vendas));  
+    atualizarTabela();  
+}  
+  
+// Mostrar histórico  
+function mostrarHistorico(){  
+    const corpo = document.querySelector('#tabela-historico tbody');  
+    corpo.innerHTML='';  
+    let total=0;  
+    let contadorProdutos = {};  
+    vendas.forEach(v=>{  
+        corpo.innerHTML+=`<tr><td>${v.hora}</td><td>${v.produto}</td><td>R$${v.valor.toFixed(2)}</td></tr>`;  
+        total+=v.valor;  
+        contadorProdutos[v.produto] = (contadorProdutos[v.produto]||0)+1;  
+    });  
+    document.getElementById('historico-total').textContent='Total geral: R$'+total.toFixed(2);  
+}  
+  
+// Limpar histórico  
+function limparHistorico(){  
+    if(confirm('Apagar todo o histórico?')){  
+        vendas=[];  
+        localStorage.removeItem('vendas');  
+        atualizarTabela();  
+        mostrarHistorico();  
+    }  
+}  
+  
+// Calcular troco  
+function calcularTroco(){  
+    const compra=parseFloat(document.getElementById('valor-compra').value)||0;  
+    const recebido=parseFloat(document.getElementById('valor-recebido').value)||0;  
+    const troco=recebido-compra;  
+    const campo=document.getElementById('resultado-troco');  
+    if(troco<0) campo.textContent="Falta R$"+Math.abs(troco).toFixed(2);  
+    else campo.textContent="Troco: R$"+troco.toFixed(2);  
+  
+    // Limpar inputs  
+    document.getElementById('valor-compra').value='';  
+    document.getElementById('valor-recebido').value='';  
+}  
+  
+// Dashboard  
+function atualizarDashboard(){  
+    let total=0, qtd=0, produtos={'🍺 Cerveja Litrinho':0,'🥩 Espetinho':0};  
+    vendas.forEach(v=>{  
+        total+=v.valor;  
+        qtd++;  
+        if(produtos[v.produto]!=undefined) produtos[v.produto]+=v.valor;  
+    });  
+    document.getElementById('dash-faturamento').textContent='R$'+total.toFixed(2);  
+    document.getElementById('dash-quantidade').textContent=qtd;  
+    document.getElementById('dash-margem').textContent='--%';  
+  
+    // Barras de produto  
+    const totalProd = Object.values(produtos).reduce((a,b)=>a+b,0) ||1;  
+    document.getElementById('bar-cerveja').style.width=(produtos['🍺 Cerveja Litrinho']/totalProd*100)+'%';  
+    document.getElementById('bar-espetinho').style.width=(produtos['🥩 Espetinho']/totalProd*100)+'%';  
+  
+    // Barra de progresso  
+    document.getElementById('progress-faturamento').style.width=Math.min(total/100*100,100)+'%';  
+    document.getElementById('progress-qtd').style.width=Math.min(qtd/50*100,100)+'%';  
+  
+    // Atualizar gráfico linha  
+    let mesAtual = new Date().getMonth(); // 0-11  
+    lineChart.data.datasets[0].data[mesAtual] = lineChart.data.datasets[0].data[mesAtual] || 0;  
+    lineChart.data.datasets[0].data[mesAtual] = vendas.reduce((sum,v)=>sum+v.valor,0);  
+    lineChart.update();  
+}  
+  
+// Gráfico linha  
+const ctx = document.getElementById('lineChart').getContext('2d');  
+const lineChart = new Chart(ctx, {  
+    type:'line',  
+    data:{ labels:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'], datasets:[{label:'Faturamento', data:[0,0,0,0,0,0,0,0,0,0,0,0], borderColor:'#7f5af0', backgroundColor:'rgba(127,90,240,0.2)', fill:true, tension:0.4}] },  
+    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#333'}, ticks:{color:'#fff'}}, y:{grid:{color:'#333'}, ticks:{color:'#fff'}}} }  
+});  
+</script>  </body>  
+</html>
