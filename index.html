@@ -1,214 +1,249 @@
-<!DOCTYPE html>  <html lang="pt-BR">  
-<head>  
-<meta charset="UTF-8">  
-<meta name="viewport" content="width=device-width, initial-scale=1.0">  
-<title>🔥 Churrasquinho da Symonny 🔥</title>  <!-- Google Fonts -->  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">  <!-- Font Awesome -->  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">  <!-- Chart.js -->  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  <style>  
-* { box-sizing: border-box; transition:0.3s ease; }  
-body { font-family: 'Poppins', sans-serif; background: radial-gradient(circle at top, #0d0d1a, #1a1a3f); margin:0; padding:0; color:#fff; overflow-x:hidden; }  
-h1 { text-align:center; margin:0; padding:18px; font-size:30px; color:#fff; text-shadow:0 0 10px #7f5af0,0 0 20px #4caf50; animation:pulse 3s infinite alternate; }  
-@keyframes pulse { from { text-shadow:0 0 10px #7f5af0; } to { text-shadow:0 0 25px #4caf50; } }  
-  
-/* Menus e Containers */  
-.menu, #vendas, #troco, #historico, #dashboard { margin:25px auto; background: rgba(25,25,45,0.95); border-radius: 20px; padding:25px; width:90%; max-width:800px; box-shadow:0 8px 25px rgba(0,0,0,0.4); }  
-.hidden { display:none; }  
-button { display:block; width:90%; margin:12px auto; padding:15px; border:none; border-radius:14px; font-size:22px; font-weight:600; cursor:pointer; color:#fff; box-shadow:0 4px 15px rgba(0,0,0,0.3); }  
-button:hover { transform:scale(1.05); }  
-button:active { transform:scale(0.98); }  
-  
-.venda-btn { background: linear-gradient(135deg,#00c853,#4caf50); }  
-.troco-btn { background: linear-gradient(135deg,#2196F3,#42a5f5); }  
-.historico-btn { background: linear-gradient(135deg,#ff9800,#ffc107); }  
-.dashboard-btn { background: linear-gradient(135deg,#7f5af0,#4caf50); }  
-.voltar-btn { background: linear-gradient(135deg,#333,#555); }  
-  
-/* Produtos e Tabelas */  
-.produto-btn { background:#1b2735; color:#fff; border:2px solid #7f5af0; font-size:20px; border-radius:12px; padding:14px; text-align:left; display:flex; justify-content:space-between; }  
-.produto-btn:hover { background:#273353; }  
-  
-table { width:100%; margin-top:15px; border-collapse: collapse; background:#1a1a3f; border-radius:10px; overflow:hidden; display:block; }  
-thead, tbody, tr { display:table; width:100%; table-layout: fixed; }  
-tbody { max-height:250px; overflow-y:auto; display:block; }  
-th { background:#4b3f8d; color:#fff; padding:10px; font-size:18px; }  
-td { border-bottom:1px solid #333; padding:8px; font-size:18px; text-align:center; }  
-tr:nth-child(even) { background-color:#2a2a50; }  
-.total { font-size:22px; font-weight:bold; margin-top:15px; color:#fff; background:#4b3f8d; border-radius:10px; padding:12px; text-align:center; }  
-  
-/* Inputs */  
-input { font-size:22px; padding:10px; margin:10px auto; width:85%; border-radius:10px; border:2px solid #555; text-align:center; display:block; background:#1b2735; color:#fff; }  
-  
-/* Dashboard interno */  
-.dashboard-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px; }  
-.card { background:#1f1f3f; border-radius:12px; padding:20px; display:flex; flex-direction:column; }  
-.card h3 { font-size:16px; color:#ccc; margin-bottom:10px; }  
-.card .value { font-size:28px; font-weight:700; color:#7f5af0; }  
-.card .meta { font-size:12px; color:#aaa; margin-top:5px; }  
-.progress-bar { height:8px; background:#444; border-radius:4px; margin-top:10px; overflow:hidden; }  
-.progress { height:8px; border-radius:4px; background: linear-gradient(90deg,#7f5af0,#4caf50); width:0%; transition: width 1s ease; }  
-  
-.product-bar { display:flex; align-items:center; margin-bottom:10px; }  
-.product-bar span { width:80px; font-size:14px; }  
-.product-bar .bar-container { flex:1; background:#444; height:12px; border-radius:6px; overflow:hidden; }  
-.product-bar .bar { height:12px; border-radius:6px; background:#7f5af0; width:0%; transition: width 1s ease; }  
-  
-.chart-container { width:100%; height:200px; }  
-  
-</style>  </head>  
-<body>  <h1>🔥 Churrasquinho da Symonny 🔥</h1>  <div id="menu-principal" class="menu">  
-    <button class="venda-btn" onclick="abrir('vendas')">🧾 Registrar Venda</button>  
-    <button class="troco-btn" onclick="abrir('troco')">💰 Sistema de Troco</button>  
-    <button class="historico-btn" onclick="abrir('historico')">📊 Histórico de Vendas</button>  
-    <button class="dashboard-btn" onclick="abrir('dashboard')">📈 Dashboard</button>  
-</div>  <!-- VENDAS -->  <div id="vendas" class="hidden">  
-    <h2>📋 Registrar Venda</h2>  
-    <button class="produto-btn" onclick="registrarVenda('🍺 Cerveja Litrinho',3.50)"><span>🍺</span>Cerveja Litrinho – R$3,50</button>  
-    <button class="produto-btn" onclick="registrarVenda('🥩 Espetinho',16.00)"><span>🥩</span>Espetinho – R$16,00</button>  
-    <div class="total" id="total-dia">Total do Dia: R$0,00</div>  
-    <table id="tabela-vendas"><thead><tr><th>Hora</th><th>Produto</th><th>Valor</th><th></th></tr></thead><tbody></tbody></table>  
-    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
-</div>  <!-- TROCO -->  <div id="troco" class="hidden">  
-    <h2>💰 Sistema de Troco</h2>  
-    <input type="number" id="valor-compra" placeholder="Valor da compra (R$)">  
-    <input type="number" id="valor-recebido" placeholder="Valor recebido (R$)">  
-    <button class="venda-btn" onclick="calcularTroco()">Calcular Troco</button>  
-    <div id="resultado-troco" class="total"></div>  
-    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
-</div>  <!-- HISTÓRICO -->  <div id="historico" class="hidden">  
-    <h2>📊 Histórico de Vendas</h2>  
-    <table id="tabela-historico"><thead><tr><th>Hora</th><th>Produto</th><th>Valor</th></tr></thead><tbody></tbody></table>  
-    <div class="total" id="historico-total"></div>  
-    <button class="venda-btn" onclick="limparHistorico()">🗑️ Apagar Tudo</button>  
-    <button class="voltar-btn" onclick="voltar()">⬅ Voltar</button>  
-</div>  <!-- DASHBOARD -->  <div id="dashboard" class="hidden">  
-    <h2>📈 Dashboard Profissional</h2>  
-    <div class="dashboard-grid">  
-        <div class="card"><h3>FATURAMENTO</h3><div class="value" id="dash-faturamento">R$0,00</div><div class="meta">MÊS ATUAL</div><div class="progress-bar"><div class="progress" id="progress-faturamento" style="width:0%"></div></div></div>  
-        <div class="card"><h3>MARGEM BRUTA</h3><div class="value" id="dash-margem">0%</div><div class="meta">VS ANO ANTERIOR</div><div class="progress-bar"><div class="progress" id="progress-margem" style="width:0%"></div></div></div>  
-        <div class="card"><h3>QTD VENDIDA</h3><div class="value" id="dash-quantidade">0</div><div class="meta">UNIDADES</div><div class="progress-bar"><div class="progress" id="progress-qtd" style="width:0%"></div></div></div>  
-        <div class="card">  
-            <h3>FATURAMENTO POR PRODUTO</h3>  
-            <div class="product-bar"><span>Cerveja</span><div class="bar-container"><div class="bar" id="bar-cerveja" style="width:0%"></div></div></div>  
-            <div class="product-bar"><span>Espetinho</span><div class="bar-container"><div class="bar" id="bar-espetinho" style="width:0%"></div></div></div>  
-        </div>  
-        <div class="card">  
-            <h3>FATURAMENTO AO LONGO DO TEMPO</h3>  
-            <div class="chart-container"><canvas id="lineChart"></canvas></div>  
-        </div>  
-    </div>  
-</div>  <script>  
-// Vendas armazenadas  
-let vendas = JSON.parse(localStorage.getItem('vendas')) || [];  
-  
-// Abrir tela  
-function abrir(tela){  
-    document.querySelectorAll('#menu-principal, #vendas, #troco, #historico, #dashboard').forEach(d => d.classList.add('hidden'));  
-    document.getElementById(tela).classList.remove('hidden');  
-    if(tela==='vendas') atualizarTabela();  
-    if(tela==='historico') mostrarHistorico();  
-    if(tela==='dashboard') atualizarDashboard();  
-}  
-  
-// Voltar ao menu  
-function voltar(){ abrir('menu-principal'); }  
-  
-// Registrar venda  
-function registrarVenda(produto, valor){  
-    const hora = new Date().toLocaleTimeString();  
-    vendas.push({hora, produto, valor});  
-    localStorage.setItem('vendas', JSON.stringify(vendas));  
-    atualizarTabela();  
-}  
-  
-// Atualizar tabela vendas  
-function atualizarTabela(){  
-    const corpo = document.querySelector('#tabela-vendas tbody');  
-    corpo.innerHTML = '';  
-    let total = 0;  
-    vendas.forEach((v,i)=>{  
-        total+=v.valor;  
-        corpo.innerHTML+=`<tr><td>${v.hora}</td><td>${v.produto}</td><td>R$${v.valor.toFixed(2)}</td><td><button onclick="apagarVenda(${i})">❌</button></td></tr>`;  
-    });  
-    document.getElementById('total-dia').textContent='Total do Dia: R$'+total.toFixed(2);  
-}  
-  
-// Apagar venda individual  
-function apagarVenda(i){  
-    vendas.splice(i,1);  
-    localStorage.setItem('vendas', JSON.stringify(vendas));  
-    atualizarTabela();  
-}  
-  
-// Mostrar histórico  
-function mostrarHistorico(){  
-    const corpo = document.querySelector('#tabela-historico tbody');  
-    corpo.innerHTML='';  
-    let total=0;  
-    let contadorProdutos = {};  
-    vendas.forEach(v=>{  
-        corpo.innerHTML+=`<tr><td>${v.hora}</td><td>${v.produto}</td><td>R$${v.valor.toFixed(2)}</td></tr>`;  
-        total+=v.valor;  
-        contadorProdutos[v.produto] = (contadorProdutos[v.produto]||0)+1;  
-    });  
-    document.getElementById('historico-total').textContent='Total geral: R$'+total.toFixed(2);  
-}  
-  
-// Limpar histórico  
-function limparHistorico(){  
-    if(confirm('Apagar todo o histórico?')){  
-        vendas=[];  
-        localStorage.removeItem('vendas');  
-        atualizarTabela();  
-        mostrarHistorico();  
-    }  
-}  
-  
-// Calcular troco  
-function calcularTroco(){  
-    const compra=parseFloat(document.getElementById('valor-compra').value)||0;  
-    const recebido=parseFloat(document.getElementById('valor-recebido').value)||0;  
-    const troco=recebido-compra;  
-    const campo=document.getElementById('resultado-troco');  
-    if(troco<0) campo.textContent="Falta R$"+Math.abs(troco).toFixed(2);  
-    else campo.textContent="Troco: R$"+troco.toFixed(2);  
-  
-    // Limpar inputs  
-    document.getElementById('valor-compra').value='';  
-    document.getElementById('valor-recebido').value='';  
-}  
-  
-// Dashboard  
-function atualizarDashboard(){  
-    let total=0, qtd=0, produtos={'🍺 Cerveja Litrinho':0,'🥩 Espetinho':0};  
-    vendas.forEach(v=>{  
-        total+=v.valor;  
-        qtd++;  
-        if(produtos[v.produto]!=undefined) produtos[v.produto]+=v.valor;  
-    });  
-    document.getElementById('dash-faturamento').textContent='R$'+total.toFixed(2);  
-    document.getElementById('dash-quantidade').textContent=qtd;  
-    document.getElementById('dash-margem').textContent='--%';  
-  
-    // Barras de produto  
-    const totalProd = Object.values(produtos).reduce((a,b)=>a+b,0) ||1;  
-    document.getElementById('bar-cerveja').style.width=(produtos['🍺 Cerveja Litrinho']/totalProd*100)+'%';  
-    document.getElementById('bar-espetinho').style.width=(produtos['🥩 Espetinho']/totalProd*100)+'%';  
-  
-    // Barra de progresso  
-    document.getElementById('progress-faturamento').style.width=Math.min(total/100*100,100)+'%';  
-    document.getElementById('progress-qtd').style.width=Math.min(qtd/50*100,100)+'%';  
-  
-    // Atualizar gráfico linha  
-    let mesAtual = new Date().getMonth(); // 0-11  
-    lineChart.data.datasets[0].data[mesAtual] = lineChart.data.datasets[0].data[mesAtual] || 0;  
-    lineChart.data.datasets[0].data[mesAtual] = vendas.reduce((sum,v)=>sum+v.valor,0);  
-    lineChart.update();  
-}  
-  
-// Gráfico linha  
-const ctx = document.getElementById('lineChart').getContext('2d');  
-const lineChart = new Chart(ctx, {  
-    type:'line',  
-    data:{ labels:['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'], datasets:[{label:'Faturamento', data:[0,0,0,0,0,0,0,0,0,0,0,0], borderColor:'#7f5af0', backgroundColor:'rgba(127,90,240,0.2)', fill:true, tension:0.4}] },  
-    options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ x:{grid:{color:'#333'}, ticks:{color:'#fff'}}, y:{grid:{color:'#333'}, ticks:{color:'#fff'}}} }  
-});  
-</script>  </body>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Network Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Exo+2:wght@300;400;500;600;700&family=Audiowide&display=swap" rel="stylesheet">
+    <link href="tooplate-neural-style.css" rel="stylesheet">
+    
+<!--
+
+Tooplate 2139 Neural Portfolio
+
+https://www.tooplate.com/view/2139-neural-portfolio
+
+Free HTML CSS Template
+
+-->
+
+</head>
+<body>
+    <canvas id="neural-bg"></canvas>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="logo-container">
+                <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Neural Network Logo -->
+                    <circle cx="50" cy="20" r="8" fill="none" stroke="#00ffff" stroke-width="2"/>
+                    <circle cx="25" cy="50" r="8" fill="none" stroke="#ff00ff" stroke-width="2"/>
+                    <circle cx="75" cy="50" r="8" fill="none" stroke="#ff00ff" stroke-width="2"/>
+                    <circle cx="50" cy="80" r="8" fill="none" stroke="#ffff00" stroke-width="2"/>
+                    
+                    <!-- Connections -->
+                    <line x1="50" y1="28" x2="25" y2="42" stroke="#00ffff" stroke-width="1" opacity="0.6"/>
+                    <line x1="50" y1="28" x2="75" y2="42" stroke="#00ffff" stroke-width="1" opacity="0.6"/>
+                    <line x1="25" y1="58" x2="50" y2="72" stroke="#ff00ff" stroke-width="1" opacity="0.6"/>
+                    <line x1="75" y1="58" x2="50" y2="72" stroke="#ff00ff" stroke-width="1" opacity="0.6"/>
+                    
+                    <!-- Center node -->
+                    <circle cx="50" cy="50" r="5" fill="#00ffff"/>
+                    <line x1="50" y1="28" x2="50" y2="45" stroke="#00ffff" stroke-width="1" opacity="0.6"/>
+                    <line x1="50" y1="55" x2="50" y2="72" stroke="#ffff00" stroke-width="1" opacity="0.6"/>
+                    <line x1="33" y1="50" x2="45" y2="50" stroke="#ff00ff" stroke-width="1" opacity="0.6"/>
+                    <line x1="55" y1="50" x2="67" y2="50" stroke="#ff00ff" stroke-width="1" opacity="0.6"/>
+                </svg>
+                <span class="logo-text">NEURAL</span>
+            </a>
+            
+            <div class="mobile-menu-toggle" id="mobile-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <ul>
+                    <li><a href="#home">HOME</a></li>
+                    <li><a href="#about">ABOUT</a></li>
+                    <li><a href="#projects">PROJECTS</a></li>
+                    <li><a href="#skills">SKILLS</a></li>
+                    <li><a href="#contact">CONTACT</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="glitch" data-text="NEURAL NETWORK">NEURAL NETWORK</h1>
+            <p class="subtitle">Web Developer & Digital Architect</p>
+        </div>
+        <a href="#about" class="scroll-btn">
+            <div class="scroll-btn-inner">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                </svg>
+            </div>
+        </a>
+    </section>
+
+    <section id="about" class="fade-in">
+        <h2 class="section-title">ABOUT ME</h2>
+        <div class="about-container">
+            <div class="about-image">
+                <div class="profile-img-wrapper">
+                    <div class="profile-img">
+                        <span>AI</span>
+                    </div>
+                </div>
+            </div>
+            <div class="about-content">
+                <h3>Crafting Digital Experiences</h3>
+                <p style="font-size: 1.1rem; line-height: 1.8; margin-bottom: 20px;">
+                    I'm a passionate web developer specializing in creating cutting-edge digital experiences 
+                    that merge art with technology. My work focuses on building neural network-inspired 
+                    interfaces that push the boundaries of web design.
+                </p>
+                <p style="font-size: 1.1rem; line-height: 1.8; color: var(--text-secondary);">
+                    With over 5 years of experience in frontend development, I've mastered the art of 
+                    transforming complex ideas into intuitive, visually stunning web applications. 
+                    My expertise spans from responsive design to advanced animations and WebGL implementations.
+                </p>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">Projects</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5+</div>
+                        <div class="stat-label">Years Exp</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">30+</div>
+                        <div class="stat-label">Clients</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="fade-in">
+        <h2 class="section-title">PROJECTS</h2>
+        <div class="projects-grid">
+            <div class="glass-card project-card">
+                <h3 style="color: var(--primary);">AI Dashboard</h3>
+                <p style="color: var(--text-secondary);">Real-time analytics with neural network visualizations and predictive modeling</p>
+            </div>
+            <div class="glass-card project-card">
+                <h3 style="color: var(--secondary);">Quantum UI</h3>
+                <p style="color: var(--text-secondary);">Experimental interface system inspired by quantum computing principles</p>
+            </div>
+            <div class="glass-card project-card">
+                <h3 style="color: var(--accent);">Cyber Portal</h3>
+                <p style="color: var(--text-secondary);">Immersive web experience with advanced WebGL and Three.js effects</p>
+            </div>
+            <div class="glass-card project-card">
+                <h3 style="color: var(--primary);">Data Stream</h3>
+                <p style="color: var(--text-secondary);">Live data visualization platform with real-time streaming capabilities</p>
+            </div>
+            <div class="glass-card project-card">
+                <h3 style="color: var(--secondary);">Neon Grid</h3>
+                <p style="color: var(--text-secondary);">Cyberpunk-themed design system with glowing components and animations</p>
+            </div>
+            <div class="glass-card project-card">
+                <h3 style="color: var(--accent);">Matrix View</h3>
+                <p style="color: var(--text-secondary);">3D data exploration tool with virtual reality integration support</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="skills" class="fade-in">
+        <h2 class="section-title">SKILLS</h2>
+        <div class="skills-container">
+            <div class="skill-node">
+                <span>HTML5</span>
+            </div>
+            <div class="skill-node">
+                <span>CSS3</span>
+            </div>
+            <div class="skill-node">
+                <span>JavaScript</span>
+            </div>
+            <div class="skill-node">
+                <span>React</span>
+            </div>
+            <div class="skill-node">
+                <span>WebGL</span>
+            </div>
+            <div class="skill-node">
+                <span>Three.js</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="fade-in">
+        <h2 class="section-title">CONTACT</h2>
+        <form class="contact-form glass-card">
+            <div class="form-group">
+                <input type="text" placeholder="Your Name" required>
+            </div>
+            <div class="form-group">
+                <input type="email" placeholder="Your Email" required>
+            </div>
+            <div class="form-group">
+                <textarea rows="5" placeholder="Your Message" required></textarea>
+            </div>
+            <button type="submit" class="neural-btn">SEND MESSAGE</button>
+        </form>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#projects">Projects</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Web Design</a></li>
+                    <li><a href="#">UI/UX Development</a></li>
+                    <li><a href="#">Frontend Development</a></li>
+                    <li><a href="#">Consultation</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Connect</h3>
+                <p style="color: var(--text-secondary); margin-bottom: 10px;">
+                    Let's build something amazing together
+                </p>
+                <div class="social-links">
+                    <a href="#" aria-label="GitHub">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="LinkedIn">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        </svg>
+                    </a>
+                    <a href="#" aria-label="Twitter">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717 0-4.92 2.203-4.92 4.917 0 .39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475 0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314 0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39 0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054 0 13.999-7.496 13.999-13.986 0-.209 0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2048 Neural Network Portfolio. All rights reserved. Provided by <a href="https://www.tooplate.com" rel="nofollow noopener">Tooplate</a></p>
+        </div>
+    </footer>
+<script src="tooplate-neural-scripts.js"></script>
+
+</body>
 </html>
